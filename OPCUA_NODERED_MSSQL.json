@@ -1,0 +1,187 @@
+[
+    {
+        "id": "b794e27dbf3c7d4f",
+        "type": "tab",
+        "label": "SQL",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "e1d3fc917af11e4e",
+        "type": "OpcUa-Item",
+        "z": "b794e27dbf3c7d4f",
+        "item": "ns=4;s=|var|CODESYS Control Win V3.Application.OPCUA.var01",
+        "datatype": "Int16",
+        "value": "",
+        "name": "valor01",
+        "x": 260,
+        "y": 160,
+        "wires": [
+            [
+                "619426411b7f9b2e"
+            ]
+        ]
+    },
+    {
+        "id": "619426411b7f9b2e",
+        "type": "OpcUa-Client",
+        "z": "b794e27dbf3c7d4f",
+        "endpoint": "a2319c5be774709f",
+        "action": "subscribe",
+        "deadbandtype": "a",
+        "deadbandvalue": 1,
+        "time": "1",
+        "timeUnit": "s",
+        "certificate": "n",
+        "localfile": "",
+        "localkeyfile": "",
+        "securitymode": "None",
+        "securitypolicy": "None",
+        "folderName4PKI": "",
+        "name": "Sub",
+        "x": 410,
+        "y": 200,
+        "wires": [
+            [
+                "325156b1b00849fc"
+            ]
+        ]
+    },
+    {
+        "id": "f247f4c780cd99c1",
+        "type": "inject",
+        "z": "b794e27dbf3c7d4f",
+        "name": "",
+        "props": [],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 110,
+        "y": 160,
+        "wires": [
+            [
+                "e1d3fc917af11e4e",
+                "15b321a4f04e828a"
+            ]
+        ]
+    },
+    {
+        "id": "15b321a4f04e828a",
+        "type": "OpcUa-Item",
+        "z": "b794e27dbf3c7d4f",
+        "item": "ns=4;s=|var|CODESYS Control Win V3.Application.OPCUA.var02",
+        "datatype": "Int16",
+        "value": "",
+        "name": "valor02",
+        "x": 260,
+        "y": 200,
+        "wires": [
+            [
+                "619426411b7f9b2e"
+            ]
+        ]
+    },
+    {
+        "id": "325156b1b00849fc",
+        "type": "join",
+        "z": "b794e27dbf3c7d4f",
+        "name": "",
+        "mode": "custom",
+        "build": "array",
+        "property": "payload",
+        "propertyType": "msg",
+        "key": "topic",
+        "joiner": "\\n",
+        "joinerType": "str",
+        "accumulate": false,
+        "timeout": "",
+        "count": "2",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "",
+        "reduceFixup": "",
+        "x": 110,
+        "y": 340,
+        "wires": [
+            [
+                "b4b4d7c4aeefac4c"
+            ]
+        ]
+    },
+    {
+        "id": "6f2ce82c01859208",
+        "type": "MSSQL",
+        "z": "b794e27dbf3c7d4f",
+        "mssqlCN": "2653dfb8e38ad685",
+        "name": "Banco_Insert",
+        "query": "",
+        "outField": "payload",
+        "x": 450,
+        "y": 340,
+        "wires": [
+            [
+                "09661c17529f67fa"
+            ]
+        ]
+    },
+    {
+        "id": "b4b4d7c4aeefac4c",
+        "type": "function",
+        "z": "b794e27dbf3c7d4f",
+        "name": "Função Insert",
+        "func": "var valor1=msg.payload[0]\nvar valor2=msg.payload[1]\nmsg.payload=\"INSERT INTO [dbo].[testePLC]([var1],[var2]) VALUES( \"+valor1+\",\"+valor2+\")\"\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 280,
+        "y": 340,
+        "wires": [
+            [
+                "6f2ce82c01859208"
+            ]
+        ]
+    },
+    {
+        "id": "09661c17529f67fa",
+        "type": "debug",
+        "z": "b794e27dbf3c7d4f",
+        "name": "debug 8",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 600,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "a2319c5be774709f",
+        "type": "OpcUa-Endpoint",
+        "endpoint": "opc.tcp://192.168.0.202:4840",
+        "secpol": "None",
+        "secmode": "None",
+        "none": true,
+        "login": false,
+        "usercert": false,
+        "usercertificate": "",
+        "userprivatekey": ""
+    },
+    {
+        "id": "2653dfb8e38ad685",
+        "type": "MSSQL-CN",
+        "name": "Banco",
+        "server": "192.168.0.202\\SQLEXPRESS",
+        "encyption": true,
+        "database": "Production"
+    }
+]
